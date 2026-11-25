@@ -4,36 +4,54 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>FASIKAW TECH - Live Classroom</title>
+
 <style>
-* { box-sizing: border-box; }
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   font-family: Arial, sans-serif;
   background: #101827;
   color: white;
 }
+
 header {
   background: #172554;
-  padding: 20px;
+  padding: 18px;
   text-align: center;
 }
+
 .container {
-  max-width: 1000px;
-  margin: 25px auto;
+  max-width: 1450px;
+  margin: 20px auto;
   padding: 15px;
 }
+
 .card {
   background: #1e293b;
-  padding: 22px;
+  padding: 20px;
   border-radius: 14px;
 }
-input {
-  width: 100%;
-  padding: 14px;
-  margin: 12px 0;
-  border-radius: 8px;
-  font-size: 16px;
+
+.controls {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 15px;
 }
+
+input, select {
+  width: 100%;
+  padding: 13px;
+  border-radius: 8px;
+  border: 1px solid #475569;
+  background: #0f172a;
+  color: white;
+  font-size: 15px;
+}
+
 button {
   padding: 13px 20px;
   background: #2563eb;
@@ -43,93 +61,316 @@ button {
   cursor: pointer;
   margin: 5px;
 }
-#meeting {
-  width: 100%;
-  min-height: 550px;
+
+button:hover {
+  background: #1d4ed8;
+}
+
+.leave {
+  background: #dc2626;
+}
+
+#status {
+  color: #93c5fd;
+  margin: 12px 0;
+}
+
+/* VIDEO AND BOOK SIDE BY SIDE */
+
+.classroom {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
   margin-top: 20px;
 }
-#status { color: #93c5fd; }
+
+.panel {
+  background: #0f172a;
+  padding: 12px;
+  border-radius: 12px;
+  min-width: 0;
+}
+
+.panel h3 {
+  margin-top: 5px;
+  color: #93c5fd;
+}
+
+#meeting {
+  width: 100%;
+  height: 550px;
+  overflow: hidden;
+}
+
+#bookViewer {
+  width: 100%;
+  height: 550px;
+  border: none;
+  background: white;
+  border-radius: 8px;
+}
+
+@media(max-width: 750px) {
+  .controls {
+    grid-template-columns: 1fr;
+  }
+
+  .classroom {
+    grid-template-columns: 1fr;
+  }
+
+  #meeting,
+  #bookViewer {
+    height: 450px;
+  }
+}
 </style>
 </head>
+
 <body>
 
 <header>
   <h1>FASIKAW TECH</h1>
-  <p>Live Online Classroom</p>
+  <p>Grade 9 Live Online Classroom</p>
 </header>
 
 <div class="container">
-  <div class="card">
-    <h2>FASIKAW Live Video Class</h2>
-    <p>Computer Basics | Grade 9–10</p>
 
-    <label for="room">Private test room name</label>
-    <input id="room" type="text"
-      placeholder="Enter a unique room name">
+<div class="card">
 
-    <button onclick="joinClass()">Join Video Class</button>
-    <button onclick="leaveClass()">Leave Class</button>
+<h2>FASIKAW LIVE CLASSROOM</h2>
 
-    <p id="status">Ready to start.</p>
-    <div id="meeting"></div>
+<div class="controls">
+
+  <div>
+    <label>Your Name</label>
+    <input
+      id="userName"
+      type="text"
+      placeholder="Enter your name">
   </div>
+
+  <div>
+    <label>Your Role</label>
+    <select id="userRole">
+      <option value="student">Student</option>
+      <option value="teacher">Teacher</option>
+    </select>
+  </div>
+
+  <div>
+    <label>Room Name</label>
+    <input
+      id="room"
+      type="text"
+      placeholder="Use the same room name for everyone">
+  </div>
+
+</div>
+
+<button onclick="joinClass()">
+  Join Video Class
+</button>
+
+<button class="leave" onclick="leaveClass()">
+  Leave Class
+</button>
+
+<p id="status">Ready to start.</p>
+
+<div class="classroom">
+
+  <!-- VIDEO CLASSROOM -->
+
+  <div class="panel">
+
+    <h3>Live Video – Teacher & Students</h3>
+
+    <div id="meeting"></div>
+
+  </div>
+
+  <!-- SUBJECT BOOKS -->
+
+  <div class="panel">
+
+    <h3>Learning Books – Grade 9</h3>
+
+    <label>Select Subject</label>
+
+    <select id="subject" onchange="changeBook()">
+
+      <option value="mathematics">Mathematics</option>
+      <option value="english">English</option>
+      <option value="physics">Physics</option>
+      <option value="chemistry">Chemistry</option>
+      <option value="biology">Biology</option>
+      <option value="history">History</option>
+      <option value="geography">Geography</option>
+      <option value="it">Information Technology</option>
+      <option value="citizenship">Citizenship</option>
+
+    </select>
+
+    <iframe
+      id="bookViewer"
+      src="/books/mathematics.pdf"
+      title="Grade 9 Learning Book">
+    </iframe>
+
+  </div>
+
+</div>
+</div>
 </div>
 
 <script>
+
 let api = null;
 
 function joinClass() {
-  const room = document.getElementById("room").value.trim();
+
+  const name =
+    document.getElementById("userName").value.trim();
+
+  const role =
+    document.getElementById("userRole").value;
+
+  const room =
+    document.getElementById("room").value.trim();
+
+  if (!name) {
+    alert("Please enter your name.");
+    return;
+  }
 
   if (!/^[a-zA-Z0-9_-]{20,100}$/.test(room)) {
-    alert("Enter a unique room name with at least 20 characters.");
+    alert("Enter a room name with at least 20 characters.");
     return;
   }
 
   if (api) return;
 
   document.getElementById("status").textContent =
-    "Connecting to video classroom...";
+    "Connecting to classroom...";
+  function startMeeting() {
 
-  const script = document.createElement("script");
-  script.src = "https://meet.jit.si/external_api.js";
-
-  script.onload = function() {
     api = new JitsiMeetExternalAPI("meet.jit.si", {
+
       roomName: room,
-      parentNode: document.getElementById("meeting"),
+
+      parentNode:
+        document.getElementById("meeting"),
+
       width: "100%",
       height: 550,
+
+      userInfo: {
+        displayName:
+          name + (role === "teacher"
+            ? " (Teacher)"
+            : " (Student)")
+      },
+
       configOverwrite: {
         startWithAudioMuted: true,
         startWithVideoMuted: true
       }
+
     });
 
     api.addListener("videoConferenceJoined", function() {
+
       document.getElementById("status").textContent =
-        "Connected to classroom!";
+        "Connected successfully as " + role + "!";
+
     });
-  };
 
-  script.onerror = function() {
-    document.getElementById("status").textContent =
-      "Video service could not load. Check internet.";
-  };
+    api.addListener("videoConferenceLeft", function() {
 
-  document.body.appendChild(script);
+      document.getElementById("status").textContent =
+        "You left the classroom.";
+
+      api = null;
+
+    });
+
+  }
+
+  if (window.JitsiMeetExternalAPI) {
+
+    startMeeting();
+
+  } else {
+
+    const script = document.createElement("script");
+
+    script.src =
+      "https://meet.jit.si/external_api.js";
+
+    script.onload = startMeeting;
+
+    script.onerror = function() {
+
+      document.getElementById("status").textContent =
+        "Video service could not load. Check internet.";
+
+    };
+
+    document.body.appendChild(script);
+
+  }
+
 }
 
 function leaveClass() {
+
   if (api) {
     api.dispose();
     api = null;
   }
 
   document.getElementById("meeting").innerHTML = "";
+
   document.getElementById("status").textContent =
     "You left the classroom.";
+
 }
+
+/* SUBJECT PDF SELECTION */
+
+function changeBook() {
+
+  const subject =
+    document.getElementById("subject").value;
+
+  const books = {
+
+    mathematics: "/books/mathematics.pdf",
+
+    english: "/books/english.pdf",
+
+    physics: "/books/physics.pdf",
+
+    chemistry: "/books/chemistry.pdf",
+
+    biology: "/books/biology.pdf",
+
+    history: "/books/history.pdf",
+
+    geography: "/books/geography.pdf",
+
+    it: "/books/it.pdf",
+
+    citizenship: "/books/citizenship.pdf"
+
+  };
+
+  document.getElementById("bookViewer").src =
+    books[subject];
+
+}
+
 </script>
 
 </body>
