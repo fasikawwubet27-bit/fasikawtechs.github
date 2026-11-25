@@ -2,104 +2,135 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>FASIKAW Live Classroom</title>
-
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>FASIKAW TECH - Live Classroom</title>
 <style>
-* {
-  box-sizing: border-box;
-}
-
+* { box-sizing: border-box; }
 body {
   margin: 0;
   font-family: Arial, sans-serif;
   background: #101827;
   color: white;
 }
-
 header {
   background: #172554;
-  padding: 22px;
-  text-align: center;
-}
-
-.container {
-  max-width: 900px;
-  margin: 30px auto;
   padding: 20px;
-}
-
-.class-card {
-  background: #1e293b;
-  padding: 25px;
-  border-radius: 15px;
   text-align: center;
 }
-
-.video-box {
-  background: #0f172a;
-  min-height: 260px;
-  border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 20px 0;
-  border: 1px solid #334155;
+.container {
+  max-width: 1000px;
+  margin: 25px auto;
+  padding: 15px;
 }
-
-button {
-  background: #2563eb;
-  color: white;
-  padding: 14px 25px;
-  border: none;
+.card {
+  background: #1e293b;
+  padding: 22px;
+  border-radius: 14px;
+}
+input {
+  width: 100%;
+  padding: 14px;
+  margin: 12px 0;
   border-radius: 8px;
   font-size: 16px;
 }
-
-button:disabled {
-  background: #475569;
+button {
+  padding: 13px 20px;
+  background: #2563eb;
+  color: white;
+  border: 0;
+  border-radius: 8px;
+  cursor: pointer;
+  margin: 5px;
 }
-
-.info {
-  color: #cbd5e1;
-  line-height: 1.8;
+#meeting {
+  width: 100%;
+  min-height: 550px;
+  margin-top: 20px;
 }
-
+#status { color: #93c5fd; }
 </style>
 </head>
-
 <body>
 
 <header>
   <h1>FASIKAW TECH</h1>
-  <p>Online Learning Classroom</p>
+  <p>Live Online Classroom</p>
 </header>
 
 <div class="container">
-  <div class="class-card">
+  <div class="card">
+    <h2>FASIKAW Live Video Class</h2>
+    <p>Computer Basics | Grade 9–10</p>
 
-    <h2>Live Video Classroom</h2>
+    <label for="room">Private test room name</label>
+    <input id="room" type="text"
+      placeholder="Enter a unique room name">
 
-    <p class="info">
-      Computer Basics - Grade 9 & 10
-    </p>
+    <button onclick="joinClass()">Join Video Class</button>
+    <button onclick="leaveClass()">Leave Class</button>
 
-    <div class="video-box">
-      <p>Live Video Session Will Appear Here</p>
-    </div>
-
-    <button disabled>
-      Waiting for Secure Meeting Setup
-    </button>
-
-    <p class="info">
-      Welcome to FASIKAW Online Classroom.
-      Your teacher will provide an authorized
-      meeting invitation.
-    </p>
-
+    <p id="status">Ready to start.</p>
+    <div id="meeting"></div>
   </div>
 </div>
+
+<script>
+let api = null;
+
+function joinClass() {
+  const room = document.getElementById("room").value.trim();
+
+  if (!/^[a-zA-Z0-9_-]{20,100}$/.test(room)) {
+    alert("Enter a unique room name with at least 20 characters.");
+    return;
+  }
+
+  if (api) return;
+
+  document.getElementById("status").textContent =
+    "Connecting to video classroom...";
+
+  const script = document.createElement("script");
+  script.src = "https://meet.jit.si/external_api.js";
+
+  script.onload = function() {
+    api = new JitsiMeetExternalAPI("meet.jit.si", {
+      roomName: room,
+      parentNode: document.getElementById("meeting"),
+      width: "100%",
+      height: 550,
+      configOverwrite: {
+        startWithAudioMuted: true,
+        startWithVideoMuted: true
+      }
+    });
+
+    api.addListener("videoConferenceJoined", function() {
+      document.getElementById("status").textContent =
+        "Connected to classroom!";
+    });
+  };
+
+  script.onerror = function() {
+    document.getElementById("status").textContent =
+      "Video service could not load. Check internet.";
+  };
+
+  document.body.appendChild(script);
+}
+
+function leaveClass() {
+  if (api) {
+    api.dispose();
+    api = null;
+  }
+
+  document.getElementById("meeting").innerHTML = "";
+  document.getElementById("status").textContent =
+    "You left the classroom.";
+}
+</script>
 
 </body>
 </html>
