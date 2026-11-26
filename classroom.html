@@ -209,6 +209,16 @@ button:hover {
       <option value="geography">Geography</option>
       <option value="it">Information Technology</option>
       <option value="citizenship">Citizenship</option>
+<option value="abstract_lab1">Abstract Class Lab 1</option>
+<option value="oop_ch2_part1">OOP Chapter 2 Part 1 (Slides)</option>
+<option value="oop_ch1">OOP Chapter 1 Updated</option>
+<option value="db_lab1">DB Lab 1 Manual</option>
+<option value="dld_ch1">DLD Chapter 1</option>
+<option value="dld_ch2">DLD Chapter 2</option>
+<option value="fdbms_all">FDBMS All in One - 2015 (Slides)</option>
+<option value="oop_ch2_part2">Java OOP Ch-2 Part 2 (Slides)</option>
+<option value="oop_ch3">Java OOP Chapter 3</option>
+<option value="lab_ex1">Lab Exercise 1</option>
 
     </select>
 
@@ -342,25 +352,42 @@ function leaveClass() {
 function changeBook() {
   const subject = document.getElementById("subject").value;
 
-  const bookIds = {
-    mathematics: "1AvFMyOefgvJiGI1Oku8-JlSOBkTrlSDh",
-    english: "1xUcLOKFcR2SWly_VpufZU6raQQ2pRPy1",
-    physics: "1c6DzqiYrjTErZvKLh3Z2X2vWyTIwAU7p",
-    chemistry: "1L0Cb36Y5jf-7KKxiv3m5pUINI0lB0dY5",
-    biology: "1Pu6QzwQGYLdMld9ZCXxxfP40FEvEJfF4",
-    history: "1Fp-eCjICHa42ucHH_7wvetv6x5fLS90S",
-    geography: "1A712d6fF8lOmaVP4NdTqDlUp2FvVGdxS",
-    it: "1lc1oJpN5o7D1SNodIn-AbY3OIE4EtBQT",
-    citizenship: "1RBDpChEa8rjcGOF_q0-UkQE4D2KcWDGZ"
+  const bookMap = {
+    mathematics: { type: "file", id: "1AvFMyOefgvJiGI1Oku8-JlSOBkTrlSDh" },
+    english: { type: "file", id: "1xUcLOKFcR2SWly_VpufZU6raQQ2pRPy1" },
+    physics: { type: "file", id: "1c6DzqiYrjTErZvKLh3Z2X2vWyTIwAU7p" },
+    chemistry: { type: "file", id: "1L0Cb36Y5jf-7KKxiv3m5pUINI0lB0dY5" },
+    biology: { type: "file", id: "1Pu6QzwQGYLdMld9ZCXxxfP40FEvEJfF4" },
+    history: { type: "file", id: "1Fp-eCjICHa42ucHH_7wvetv6x5fLS90S" },
+    geography: { type: "file", id: "1A712d6fF8lOmaVP4NdTqDlUp2FvVGdxS" },
+    it: { type: "file", id: "1lc1oJpN5o7D1SNodIn-AbY3OIE4EtBQT" },
+    citizenship: { type: "file", id: "1RBDpChEa8rjcGOF_q0-UkQE4D2KcWDGZ" },
+    abstract_lab1: { type: "file", id: "1eQ-WEUi0d8GoMazYiNH5keDze3CsoQ83" },
+    oop_ch2_part1: { type: "slides", id: "1NMG0RZbcWEPlFdDKHSZWL0byj5nWyRKP" },
+    oop_ch1: { type: "file", id: "14B-eiZ5OC5B9xc60iCxXFr5EycGBGfre" },
+    db_lab1: { type: "file", id: "1blSJCfBHRow7nlFa7zz5GiLBNEZUNNzr" },
+    dld_ch1: { type: "file", id: "1ZwEPv8YlrMqGABJ8zE87VE4UqNNyQky4" },
+    dld_ch2: { type: "file", id: "17sJASu6q5skrt9X0wLP887BTwhd6lwbd" },
+    fdbms_all: { type: "slides", id: "15ohvI4gfrg7Zdb-O87Jto_SRKRSJNkPR" },
+    oop_ch2_part2: { type: "slides", id: "15ohvI4gfrg7Zdb-O87Jto_SRKRSJNkPR" },
+    oop_ch3: { type: "file", id: "1PUzGiNDHsfGD7UeYyL2ugnv0D3OemJPQ" },
+    lab_ex1: { type: "file", id: "1IWJ15v71boD-A7qN92-P4TVo_yQWZEqU" }
   };
 
-  const id = bookIds[subject];
-  if (id) {
-    document.getElementById("bookViewer").src = ["https:", "", "drive." + "google." + "com", "file", "d", id, "preview"].join("/");
+  const item = bookMap[subject];
+  if (item) {
+    let url = "";
+    if (item.type === "slides") {
+      url = ["https:", "", "docs." + "google." + "com", "presentation", "d", item.id, "preview"].join("/");
+    } else {
+      url = ["https:", "", "drive." + "google." + "com", "file", "d", item.id, "preview"].join("/");
+    }
+    document.getElementById("bookViewer").src = url;
   }
 }
 
 window.addEventListener("DOMContentLoaded", changeBook);
+
 
 
 </script>
